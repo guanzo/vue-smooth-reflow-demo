@@ -28,7 +28,7 @@ Module:
 ```javascript
 <template>
     <div>
-        <div ref="container"></div>
+        <div ref="wrapper"></div>
     </div>
 </template>
 
@@ -39,7 +39,7 @@ export default {
     mixins:[smoothHeight],
     mounted(){
         this.$smoothElement({
-            el: this.$refs.container,
+            el: this.$refs.wrapper,
         })
     },
 }
@@ -55,13 +55,13 @@ Vue.component('myComponent', {
     mixins:[SmoothHeight],
     mounted(){
         this.$smoothElement({
-            el: this.$refs.container,
+            el: this.$refs.wrapper,
         })
     },
      template:
         `
         <div>
-            <div ref="container"></div>
+            <div ref="wrapper"></div>
         </div>
         `
 })
@@ -83,9 +83,9 @@ VSR will set ```style="transition: opacity 1s, height .5s;"``` on the element du
 For compatibility, do not set transitions on other properties as an inline style, as they will be overridden.
 
 ### Child transitions
-Oftentimes a child element will be removed with a vue transition, rather than immediately removed. This child transition will be detected, and the container height will be transitioned after it detects a bubbled `transitionend` event.
+Oftentimes a child element will be removed with a vue transition, rather than immediately removed. This child transition will be detected, and the wrapper height will be transitioned after it detects a bubbled `transitionend` event.
 
-**Beware of giving child elements a height transition, it'll conflict with this library's transition.** If you feel the need to do so, you don't need VSR on the container element.
+**Beware of giving child elements a height transition, it'll conflict with this library's transition.** If you feel the need to do so, you don't need VSR on the wrapper element.
 
 ### Interrupted transitions
 If the transition is interrupted, it will transition from the interrupted height to the new height. You don't need to do anything.
@@ -126,19 +126,19 @@ mounted(){
     this.$smoothElement()
     // Register with element reference
     this.$smoothElement({
-        el: this.$refs.container,
+        el: this.$refs.wrapper,
     })
     // Register with classname. The first match will be used.
     this.$smoothElement({
-        el: '.container',
+        el: '.wrapper',
     })
     // Pass an array of options
     this.$smoothElement([
         {
-            el: this.$refs.container,
+            el: this.$refs.wrapper,
         },
         {
-            el: '.container',
+            el: '.wrapper',
             transition: 'height 1s ease-in-out .15s'
             hideScollbar: true,
             debug: true,
@@ -147,7 +147,7 @@ mounted(){
     // If the element reference is a component,
     // make sure to pass in its "$el" property.
     this.$smoothElement({
-        el: this.$refs.container.$el,
+        el: this.$refs.wrapper.$el,
     })
 
 },

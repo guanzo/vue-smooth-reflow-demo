@@ -1,109 +1,85 @@
 <template>
     <div class="height">
-        <h3>Vue smooth height</h3>
-        <p>When a change in data causes a change in height, vue smooth height will animate it for you.</p>
-        <div class="examples">
-            <div class="example">
-                <p>Without vue-smooth-height. Ew!</p>
-                <div class="container">
+        <p>
+            As elements are added and removed from the DOM, height is the most common property that is affected by the reflow.
+        </p>
+        <p>VSR will transition it for you by default.</p>
+        <h4>Zero configuration.</h4>
+        <div class="examples-row">
+            <div class="example example-zero-config">
+                <p>Look at this.<br>&nbsp;</p>
+                <div class="wrapper">
                     <div v-for="n in children" :key="n"></div>
                 </div>
             </div>
-            <div class="example">
-                <p>With vue-smooth-height. Nice!</p>
-                <div class="container" ref="container">
+            <div class="example example-existing-transition">
+                <p>Transitions on other properties<br>will be preserved.</p>
+                <div class="wrapper" :style="background">
                     <div v-for="n in children" :key="n"></div>
                 </div>
             </div>
-        </div>
-        <h3>Transition compatibility</h3>
-        <div class="examples">
-            <div class="example example-2">
-                <p>Transitions on other properties will continue to work.</p>
-                <div class="container" :style="background">
-                    <div v-for="n in children" :key="n"></div>
-                </div>
-            </div>
-            <div class="example example-5">
-                <p>Using a custom transition option.</p>
-                <div class="container">
-                    <div v-for="n in children" :key="n"></div>
-                </div>
-            </div>
-            <div class="example example-6">
-                <p>Interrupted transitions are smooth.</p>
-                <div class="container">
+            <div class="example example-interrupted">
+                <p>Interrupted transitions<br>are no problem.</p>
+                <div class="wrapper">
                     <div v-for="n in children" :key="n"></div>
                 </div>
             </div>
         </div>
-        <h3>Conditional rendering and vue transitions on the smooth element</h3>
-        <div class="examples">
-            <div class="example example-7">
-                <p>Using v-if and &lt;transition&gt;.</p>
-                <transition name="fade">
-                    <div v-if="children == childrenMax" class="container">
-                        <div v-for="n in children" :key="n"></div>
-                    </div>
-                </transition>
-            </div>
-            <div class="example example-8">
-                <p>Using v-show and &lt;transition&gt;.</p>
-                <transition name="fade">
-                    <div v-show="children == childrenMax" class="container">
-                        <div v-for="n in children" :key="n"></div>
-                    </div>
-                </transition>
-            </div>
-        </div>
-        <p>Notice the difference?</p>
-        <p>Elements hidden with v-show have a height of 0, while elements hidden with v-if have a height of undefined.</p>
-        <h3>Conditional rendering and vue transitions on nested elements.</h3>
+
+        <h4>Conditional rendering and vue transitions on nested elements.</h4>
         <p>The height transition will occur after the nested transition finishes.</p>
-        <div class="examples examples-nested">
-            <div class="example example-9 example-nested-transition">
-                <p>Using v-if.</p>
-                <div class="container">
+        <div class="examples-row examples-nested">
+            <div class="example example-nested-v-if example-nested-transition">
+                <p>v-if.</p>
+                <div class="wrapper">
                     <transition name="fade-fast">
                         <div v-if="children == childrenMax"></div>
                     </transition>
                 </div>
             </div>
-            <div class="example example-10 example-nested-transition">
-                <p>Using v-show.</p>
-                <div class="container">
+            <div class="example example-nested-v-show example-nested-transition">
+                <p>v-show.</p>
+                <div class="wrapper">
                     <transition name="fade-fast">
                         <div v-show="children == childrenMax"></div>
                     </transition>
                 </div>
             </div>
-            <div class="example example-12 example-nested-transition">
+            <div class="example example-out-in example-nested-transition">
                 <p>Transition mode "out-in".</p>
-                <div class="container">
+                <div class="wrapper">
                     <transition name="fade-fast" mode="out-in">
-                        <div v-if="children == childrenMax" class="hover" key="blah"></div>
-                        <div v-else class="smaller-nested hover" key="blah2"></div>
+                        <div v-if="children == childrenMax" key="blah"></div>
+                        <div v-else class="smaller-nested" key="blah2"></div>
                     </transition>
                 </div>
             </div>
-            <div class="example example-11 example-list-transition">
-                <p>List example.</p>
-                <transition-group name="fade-fast" tag="div" class="container">
+            <div class="example example-list example-list-transition">
+                <p>Lists.</p>
+                <transition-group name="fade-fast" tag="div" class="wrapper">
                     <div v-for="n in listChildren" :key="n"></div>
                 </transition-group>
             </div>
         </div>
-        <h3>Scrollbars</h3>
-        <div class="examples">
-            <div class="example example-3">
-                <p>The scrollbar can cause problems...</p>
-                <div class="container">
+
+        <h4>Overflow.</h4>
+        <p>Two overflow problems can occur during the transition.</p>
+        <div class="examples-row">
+            <div class="example example-show-overflow">
+                <p>1. Appended elements can<br>overflow their container.</p>
+                <div class="wrapper">
                     <div v-for="n in children" :key="n"></div>
                 </div>
             </div>
-            <div class="example example-4">
-                <p>...Set "hideOverflow: true" to fix it.</p>
-                <div class="container">
+            <div class="example example-show-scrollbar">
+                <p>2. The scrollbar can appear<br>if <code>overflow: auto</code> is set.</p>
+                <div class="wrapper">
+                    <div v-for="n in children" :key="n"></div>
+                </div>
+            </div>
+            <div class="example example-hide-scrollbar">
+                <p>To fix this, VSR hides overflow during the transition.</p>
+                <div class="wrapper">
                     <div v-for="n in children" :key="n"></div>
                 </div>
             </div>
@@ -116,14 +92,37 @@ import smoothReflow from '../smooth-reflow'
 export default {
     name: 'Height',
     mixins: [smoothReflow],
+    props: ['isVsrActive', 'count', 'children', 'childrenMax', 'listChildren', 'listChildrenMax'],
     data(){
         return {
-            children: 3,
-            childrenMax: 9,
-            listChildren: 0,
-            listChildrenMax: 3,
-            direction: 'up',
-            count: 0,
+            vsrOptions: [
+                { el: '.example-zero-config .wrapper' },
+                { el: '.example-existing-transition .wrapper' },
+                { el: '.example-interrupted .wrapper', transition: 'height 4s' },
+                { el: '.example-nested-v-if .wrapper',
+                    transitionEvent: {
+                        selector: 'div',
+                    }
+                },
+                { el: '.example-nested-v-show .wrapper',
+                    transitionEvent: {
+                        propertyName: 'opacity'
+                    }
+                },
+                { el: '.example-list .wrapper',
+                    transitionEvent: {
+                        selector: 'div',
+                    }
+                },
+                { el: '.example-out-in .wrapper',
+                    transitionEvent: {
+                        selector: 'div',
+                    }
+                },
+                { el: '.example-show-overflow .wrapper', hideScrollbar: false },
+                { el: '.example-show-scrollbar .wrapper', hideScrollbar: false },
+                { el: '.example-hide-scrollbar .wrapper' },
+            ]
         }
     },
     computed: {
@@ -133,68 +132,29 @@ export default {
             }
         }
     },
-    mounted(){
-        let options = [
-            { el: this.$refs.container },
-            { el: '.example-2 .container' },
-            { el: '.example-3 .container', hideScrollbar: false },
-            { el: '.example-4 .container', hideOverflow: true },
-            { el: '.example-5 .container', transition: 'height 1s ease-in-out' },
-            { el: '.example-6 .container', transition: 'height 4s' },
-            { el: '.example-7 .container' },
-            { el: '.example-8 .container' },
-            { el: '.example-9 .container',
-                transitionEvent: {
-                    selector: 'div',
-                    propertyName: 'opacity',
-                    propertyValue: 0
-                }
-            },
-            { el: '.example-10 .container',
-                transitionEvent: {
-                    selector: 'div',
-                    propertyName: 'opacity',
-                    propertyValue: 0
-                }
-            },
-            { el: '.example-11 .container',
-                transitionEvent: {
-                    selector: 'div',
-                    propertyName: 'opacity',
-                }
-            },
-            { el: '.example-12 .container',
-                transitionEvent: {
-                    selector: 'div',
-                    propertyName: 'opacity',
-                    propertyValue: 0
-                }
-            },
-        ]
-        this.$smoothReflow(options)
-        setInterval(()=>{
-            this.children = this.count%2 == 0 ? this.childrenMax : 3
-            this.count++
-
-            if (this.direction === 'up') {
-                this.listChildren++
-                if (this.listChildren === this.listChildrenMax)
-                    this.direction = 'down'
+    watch: {
+        isVsrActive() {
+            if (this.isVsrActive) {
+                this.$smoothReflow(this.vsrOptions)
             } else {
-                this.listChildren--
-                if (this.listChildren === 0)
-                    this.direction = 'up'
+                this.$unsmoothReflow(this.vsrOptions)
             }
-        },1500)
+        }
     },
+    mounted() {
+        this.$smoothReflow(this.vsrOptions)
+    }
 }
 </script>
 
 <style scoped>
 
-.examples {
+.examples-row {
     display: flex;
     flex-wrap: wrap;
+}
+.examples-nested .example {
+    width: 210px;
 }
 .example {
     margin-right: 30px;
@@ -202,44 +162,34 @@ export default {
     height: 235px;
     width: 250px;
 }
-.example > p {
-    min-height: 40px;
-}
-.container {
+.wrapper {
     display: flex;
     flex-wrap: wrap;
-    overflow: hidden;
     width: 166px;
     will-change: height;
 }
-.example-list-transition .container {
+.example-list-transition .wrapper {
     display: block;
     width: 58px;
 }
-.example-nested-transition .container {
+.example-nested-transition .wrapper {
     align-items: center;
     justify-content: center;
 }
-.example-nested-transition .container div {
+.example-nested-transition .wrapper div {
     width: 125px;
     height: 117px;
     margin: 20px;
 }
-.example-nested-transition .container div.smaller-nested {
+.example-nested-transition .wrapper div.smaller-nested {
     width: 62px;
     height: 58px;
     margin: 40px;
 }
-.example-2 .container {
+.example-existing-transition .wrapper {
     transition: background 1s;
 }
-.example-3 .container, .example-4 .container {
+.example-show-scrollbar .wrapper, .example-hide-scrollbar .wrapper {
     overflow-y: auto;
-}
-.hover {
-    transition: .5s;
-}
-.hover:hover {
-    background: red;
 }
 </style>

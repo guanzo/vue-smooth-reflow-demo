@@ -1,31 +1,78 @@
 <template>
-    <div id="app">
-        <div class="properties">
-            <button v-for="p in properties" @click="currentProp = p" :key="p">
+    <div id="app" class="container">
+        <h2>Vue smooth reflow</h2>
+        <p>When a change in data causes a reflow, vue smooth reflow (VSR) will transition it for you.</p>
+        <p>Why? Because reflows are ugly, and motion is beautiful.</p>
+        <p>There are 3 CSS properties that can be transitioned: height, width, and transform.</p>
+        <p>Check out each property, toggle VSR off and on, and see what vue smooth reflow does for you.</p>
+        <div class="buttons">
+            <button
+                @click="isVsrActive = !isVsrActive"
+                :class="{'button-primary': isVsrActive}"
+                class="toggle-vsr">
+                VSR is {{ isVsrActive ? 'on' : 'off' }}
+            </button>
+            <button
+                v-for="p in properties"
+                @click="currentProp = p"
+                :class="{'button-primary': p === currentProp}"
+                :key="p"
+            >
                 {{ p }}
             </button>
         </div>
-        <component :is="currentProp" />
+        <component
+            :is="currentProp"
+            v-bind="vsrData"
+            :isVsrActive="isVsrActive"
+            />
     </div>
 </template>
 
 <script>
 import Height from './examples/Height'
 import Width from './examples/Width'
-import Position from './examples/Position'
+import Transform from './examples/Transform'
+import Combination from './examples/Combination'
 
 export default {
     name: 'app',
     data() {
         return {
+            isVsrActive: true,
             currentProp: 'Height',
-            properties: ['Height', 'Width', 'Position']
+            properties: ['Height', 'Width', 'Transform', 'Combination'],
+            vsrData: {
+                count: 0,
+                children: 3,
+                childrenMax: 9,
+                listChildren: 0,
+                listChildrenMax: 3,
+                direction: 'up',
+            }
         }
+    },
+    mounted() {
+        setInterval(()=>{
+            this.vsrData.children = this.vsrData.count%2 == 0 ? this.vsrData.childrenMax : 3
+            this.vsrData.count++
+
+            if (this.vsrData.direction === 'up') {
+                this.vsrData.listChildren++
+                if (this.vsrData.listChildren === this.vsrData.listChildrenMax)
+                    this.vsrData.direction = 'down'
+            } else {
+                this.vsrData.listChildren--
+                if (this.vsrData.listChildren === 0)
+                    this.vsrData.direction = 'up'
+            }
+        }, 1500)
     },
     components: {
         Height,
         Width,
-        Position
+        Transform,
+        Combination
     }
 }
 </script>
@@ -36,14 +83,34 @@ export default {
 }
 body {
     background: #fefefe;
+    padding: 3rem;
+    overflow-y: scroll;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+}
+button {
+    font-family : inherit;
+}
+.buttons {
+    display: flex;
+    margin-bottom: 30px;
 }
 
-.container {
+.buttons button {
+    margin-right: 5px;
+}
+
+.buttons .toggle-vsr {
+    width: 160px;
+    margin-right: 50px;
+}
+
+.wrapper {
     background: #BBDEFB;
     padding: 2px;
 }
 
-.container div {
+.wrapper div {
     background: #2196F3;
     margin: 2px;
     width: 50px;
@@ -57,7 +124,7 @@ body {
     opacity: 0;
 }
 .fade-fast-enter-active, .fade-fast-leave-active {
-    transition: opacity .5s;
+    transition: opacity .35s;
 }
 .fade-fast-enter, .fade-fast-leave-to {
     opacity: 0;
