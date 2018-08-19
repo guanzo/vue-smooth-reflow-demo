@@ -1,7 +1,7 @@
 module.exports = {
     configureWebpack: {
         externals: {
-            'vue-smooth-reflow': 'SmoothReflow'
+            '../../vue-smooth-reflow': 'SmoothReflow'
         }
     }
 }

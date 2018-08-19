@@ -12,13 +12,13 @@
     "vue": "^2.x.x"
   },
   "devDependencies": {
-    "vue": "^2.x.x",
     "@vue/cli-plugin-babel": "^3.0.0",
     "@vue/cli-plugin-eslint": "^3.0.0",
     "@vue/cli-service": "^3.0.0",
+    "vue": "^2.x.x",
     "vue-template-compiler": "^2.5.17"
   },
-  "main":"src/main",
+  "main": "src/main",
   "module": "src/main",
   "repository": {
     "type": "git",

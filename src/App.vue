@@ -34,7 +34,6 @@ import Height from './examples/Height'
 import Width from './examples/Width'
 import Transform from './examples/Transform'
 import Combination from './examples/Combination'
-import Test from './examples/Test'
 
 export default {
     name: 'app',
@@ -73,8 +72,7 @@ export default {
         Height,
         Width,
         Transform,
-        Combination,
-        Test
+        Combination
     }
 }
 </script>
