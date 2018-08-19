@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import smoothReflow from '../smooth-reflow'
+import { smoothReflow } from '../main'
 export default {
     name: 'Width',
     mixins: [smoothReflow],
@@ -56,7 +56,9 @@ export default {
         },
     },
     mounted() {
-        this.$smoothReflow(this.vsrOptions)
+        if (this.isVsrActive) {
+            this.$smoothReflow(this.vsrOptions)
+        }
     }
 }
 </script>

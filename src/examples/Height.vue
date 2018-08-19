@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import smoothReflow from '../smooth-reflow'
+import { smoothReflow } from '../main'
 export default {
     name: 'Height',
     mixins: [smoothReflow],
@@ -119,8 +119,8 @@ export default {
                         selector: 'div',
                     }
                 },
-                { el: '.example-show-overflow .wrapper', hideScrollbar: false },
-                { el: '.example-show-scrollbar .wrapper', hideScrollbar: false },
+                { el: '.example-show-overflow .wrapper', hideOverflow: false },
+                { el: '.example-show-scrollbar .wrapper', hideOverflow: false },
                 { el: '.example-hide-scrollbar .wrapper' },
             ]
         }
@@ -142,7 +142,9 @@ export default {
         }
     },
     mounted() {
-        this.$smoothReflow(this.vsrOptions)
+        if (this.isVsrActive) {
+            this.$smoothReflow(this.vsrOptions)
+        }
     }
 }
 </script>

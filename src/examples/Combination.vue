@@ -10,7 +10,7 @@
         <div class="example example-1">
             <div class="large" v-show="count % 2 == 0" />
             <div class="smalls">
-                <div class="wrapper" :style="background">
+                <div class="wrapper">
                     <div v-for="n in childrenCustom" :key="n"></div>
                 </div>
             </div>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import smoothReflow from '../smooth-reflow'
+import { smoothReflow } from '../main'
 export default {
     name: 'Combination',
     mixins: [smoothReflow],
@@ -59,7 +59,9 @@ export default {
         }
     },
     mounted() {
-        this.$smoothReflow(this.vsrOption)
+        if (this.isVsrActive) {
+            this.$smoothReflow(this.vsrOption)
+        }
     }
 }
 </script>

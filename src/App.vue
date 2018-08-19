@@ -3,7 +3,8 @@
         <h2>Vue smooth reflow</h2>
         <p>When a change in data causes a reflow, vue smooth reflow (VSR) will transition it for you.</p>
         <p>Why? Because reflows are ugly, and motion is beautiful.</p>
-        <p>There are 3 CSS properties that can be transitioned: height, width, and transform.</p>
+        <p>VSR will transition 3 CSS properties: height, width, and transform.</p>
+        <p>Don't hack your CSS just to transition <code>height: auto</code>. Let dynamic content fill the DOM, and VSM will handle the rest.</p>
         <p>Check out each property, toggle VSR off and on, and see what vue smooth reflow does for you.</p>
         <div class="buttons">
             <button
@@ -23,9 +24,8 @@
         </div>
         <component
             :is="currentProp"
-            v-bind="vsrData"
             :isVsrActive="isVsrActive"
-            />
+            v-bind="vsrData" />
     </div>
 </template>
 
@@ -34,6 +34,7 @@ import Height from './examples/Height'
 import Width from './examples/Width'
 import Transform from './examples/Transform'
 import Combination from './examples/Combination'
+import Test from './examples/Test'
 
 export default {
     name: 'app',
@@ -72,7 +73,8 @@ export default {
         Height,
         Width,
         Transform,
-        Combination
+        Combination,
+        Test
     }
 }
 </script>

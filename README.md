@@ -1,24 +1,31 @@
 
-# Vue Smooth Height (VSR)
-A Vue mixin that answers the question, "How do I transition height: auto?"
+# Vue Smooth Reflow (VSR)
 
-When the component's data is changed (i.e. when the `updated` lifecycle hook is called), its current height will smoothly transition to the new height, instead of instantly resizing.
+A Vue mixin that transitions reflow.
 
-Note that this library has no overlap with Vue's built in transition components.
+When the component's data is changed, any CSS properties that you register will transition to its new value.
+
+Common use cases are:
+
+* Transitioning `height: auto` and `width: auto`.
+* Smoothly repositioning elements.
+
+Note that this library has no overlap with Vue's built in `<transition>` components.
 
 ## Demo
+
 https://jsfiddle.net/axfwg1L0/94/
 
 ## Installation
 
 Download via npm:
 ```shell
-$ npm install vue-smooth-height
+$ npm install vue-smooth-reflow
 ```
 
 Include via cdn:
 ```html
-<script src="https://unpkg.com/vue-smooth-height"></script>
+<script src="https://unpkg.com/vue-smooth-reflow"></script>
 ```
 
 ## Usage
@@ -28,19 +35,25 @@ Module:
 ```javascript
 <template>
     <div>
-        <div ref="wrapper"></div>
+        <div v-for="n in children" />
     </div>
 </template>
 
 <script>
-import smoothHeight from 'vue-smooth-height';
+import smoothReflow from 'vue-smooth-reflow';
 
 export default {
-    mixins:[smoothHeight],
+    mixins: [smoothReflow],
+    data() {
+        return {
+            children: '<Dynamic value>'
+        }
+    },
     mounted(){
-        this.$smoothElement({
-            el: this.$refs.wrapper,
-        })
+        this.$smoothReflow()
+
+        // The component's root el will now transition to
+        // accomodate new values of 'this.children'
     },
 }
 </script>
@@ -48,111 +61,194 @@ export default {
 
 Browser:
 
-The mixin is available via the global variable `SmoothHeight`
-
-```javascript
-Vue.component('myComponent', {
-    mixins:[SmoothHeight],
-    mounted(){
-        this.$smoothElement({
-            el: this.$refs.wrapper,
-        })
-    },
-     template:
-        `
-        <div>
-            <div ref="wrapper"></div>
-        </div>
-        `
-})
-```
-
-## Transitions
-VSR will check if the element has a height transition, either through the stylesheet or inline styles. If it exists, VSR will use that. If it doesn't, it will apply `transition: height .5s` to the element's inline style, and append any existing transition properties it finds.
-
-For example, if the element has this style:
-
-```
-.element {
-    transition: opacity 1s;
-}
-```
-
-VSR will set ```style="transition: opacity 1s, height .5s;"``` on the element during the transition. After the transition, it will remove the inline style.
-
-For compatibility, do not set transitions on other properties as an inline style, as they will be overridden.
-
-### Child transitions
-Oftentimes a child element will be removed with a vue transition, rather than immediately removed. This child transition will be detected, and the wrapper height will be transitioned after it detects a bubbled `transitionend` event.
-
-**Beware of giving child elements a height transition, it'll conflict with this library's transition.** If you feel the need to do so, you don't need VSR on the wrapper element.
-
-### Interrupted transitions
-If the transition is interrupted, it will transition from the interrupted height to the new height. You don't need to do anything.
+The mixin is available via the global variable `SmoothReflow`
 
 ## API
-### $smoothElement(options)
-#### options: Object | Array
 
-Can be a single options object,
-or an array of options objects.
+`$smoothReflow(options)`
 
-Enables smooth height transition on an element.
+Enables smooth reflow on an element. This method is available on the component instance.
+
+`options` can be an object, or an array of objects.
+
+#### Options reference
+
+* `el`
+
+    Type: `Element` | `String`
+
+    Default: The components root element.
+
+    A reference to the element, or a CSS selector string. The resolved element will transition reflows on registered properties. This element is referred to as the "smooth element".
+
+    Use a selector string if the element is not rendered initially. If the selector returns multiple elements, the first one will be used.
+
+* `property`
+
+    Type: `String` | `Array`
+
+    Default: `height`
+
+    Valid values: `height`, `width`, `transform`
+
+    The CSS property(s) that you want to transition. You can pass any combination.
+
+    For `transform`, VSR will only transition the `translate()` function. This is to handle element repositioning due to reflow.
+
+* `transition`
+
+    Type: `String`
+
+    Default: `height .5s`
+
+    A valid CSS transition value. If you register multiple properties, and want different transitions for each, you can use commas.
+
+    ```javascript
+    this.$smoothReflow({
+        property: ['height', 'width'],
+        transition: 'height .25s ease-in-out, width .75s ease-out'
+    })
+    ```
+    The default value is conditional on the `property` option.
+
+    For example, if you register `height` and `transform` like so:
+
+    ```javascript
+    this.$smoothReflow({
+        property: ['height', 'transform']
+    })
+    ```
+
+    The default value will become `height .5s, transform .5s`.
+
+    Existing stylesheet transitions on other properties will be preserved.
+
+    Existing inline style transitions will be overridden.
+
+* `transitionEvent`
+
+    Type: `Object`
+
+    Default: `null`
+
+    Valid values:
+    ``` javascript
+    transitionEvent: {
+        // Any valid CSS selector. Note that comma delimited selectors are valid.
+        selector: String,
+        // Any valid CSS property name.
+        propertyName: String
+    }
+    ```
+
+    Configures the smooth element to react to `transitionend` events that are emitted by other elements. You must opt-in for this behavior, there is no default.
+
+    `selector` and `propertyName` serve as filters so that the smooth element doesn't cause reflows for every `transitionend` event that it catches, which kills performance. When the smooth element receives a `transitionend` event, it will check if `selector` matches `event.target`, and/or if `propertyName` matches `event.propertyName`. You can specify one or the other, or both. All checks must pass in order for the smooth element to proceed with the smooth reflow.
+
+    A common use case is to delay the smooth reflow until after a child element has been transitioned out with `v-if/v-show` and `<transition>`.
+
+    For example, if you want to react to any child `div` elements that transition out with opacity, use this config:
+
+    ``` javascript
+    transitionEvent: {
+        selector: 'div',
+        propertyName: 'opacity'
+    }
+    ```
+
+    Let's say you want to transition the smooth element's position. You want to wait for an element with class `.i-cause-reflow` to transition out before performing the smooth reflow. This element can be located anywhere within the component. Here's the configuration for that:
+
+    ``` javascript
+    transitionEvent: {
+        selector: '.i-cause-reflow',
+    }
+    ```
+
+    Check out the demo for more examples.
+
+* `hideOverflow`
+
+    Type: `Boolean`
+
+    Default: `true`
+
+    Hides overflow during the transition.
+
+    This has 2 benefits. It prevents the scrollbar from appearing, and will hide child elements that overflow.
 
 
-**Option**|**Type**|**Default**|**Description**
------|-----|-----|-----
-el|Element, String|The component's `$el`|A reference to the element, or a selector string. Use a selector string if the element is not rendered initially. If the selector string returns multiple elements, the first matched element will be used.
-transition|String|<nobr>`height .5s`</nobr>| The CSS shorthand `transition` property. Use this option if you don't want to use stylesheets (`<style>...</style>`).
-transitionEvent|?|?|Run height transition after child transitions finish.
-hideScollbar|Boolean|true|If the element has `overflow-y: auto`, a scrollbar can temporarily appear during the transition. Set this option to `true` to hide the scrollbar during the transition.
-debug|Boolean|false|Logs messages at certain times within the transition lifecycle.
+`$unsmoothReflow(options)`
 
-### $unsmoothElement(options)
-#### options: Object | Array
+Disables smooth reflow on an element. This method is available on the component instance.
 
-Can be a single options object,
-or an array of options objects.
+`options` can be an object, or an array of objects.
 
-Disables smooth height behavior on an element. Registered elements that have the same `el` as the passed in options will be unregistered. This usually isn't necessary, but is useful if you want to disable the behavior while the component is still alive.
+Registered elements that have the same `el` as the passed in options will be unregistered. This usually isn't necessary, but is useful if you want to disable the behavior while the component is still alive.
+
 
 ## Examples:
 
+Various configurations
 
 ```javascript
-
 mounted(){
-    // Zero config. Enables smooth height on this.$el
-    this.$smoothElement()
+    // Zero config. Enables smooth reflow on this.$el
+    this.$smoothReflow()
     // Register with element reference
-    this.$smoothElement({
+    this.$smoothReflow({
         el: this.$refs.wrapper,
     })
     // Register with classname. The first match will be used.
-    this.$smoothElement({
-        el: '.wrapper',
+    this.$smoothReflow({
+        el: '.wrapper-2',
     })
     // Pass an array of options
-    this.$smoothElement([
+    this.$smoothReflow([
+        // Wait for .reflow-causer to emit a transitionend event,
+        // then transition the smooth element's position
         {
             el: this.$refs.wrapper,
+            property: 'transform',
+            transitionEvent: {
+                selector: '.reflow-causer'
+            }
         },
+        // Wait for a transitionend event for opacity that
+        // comes from the smooth elements descendants,
+        // then transition the smooth elements height and width.
         {
-            el: '.wrapper',
-            transition: 'height 1s ease-in-out .15s'
-            hideScollbar: true,
-            debug: true,
-        }
+            el: '.wrapper-2',
+            property: ['height', 'width'],
+            transitionEvent: {
+                propertyName: 'opacity'
+            }
+        },
     ])
     // If the element reference is a component,
     // make sure to pass in its "$el" property.
-    this.$smoothElement({
+    this.$smoothReflow({
         el: this.$refs.wrapper.$el,
     })
-
-},
+    // Unregister a smooth element that would match
+    // the selector '.wrapper-5'
+    this.$unsmoothReflow({
+        el: '.wrapper-5'
+    })
+}
+</script>
 
 ```
 
+### Differences from vue-smooth-height
+
+* Enables smooth reflows on `width` and `transform`.
+
+* VSR will no longer check for existing transition values for registered properties. It will only use the value of the `transition` option.
+
+* The `hideOverflow` now defaults to `true`.
+
+* The way child transitions are handled is completely different.
+
 ### Browser compatibility
-Due to various browser quirks, I cannot guarantee that vue-smooth-height will work as intended on every browser.
+
+Due to various browser quirks, I cannot guarantee that vue-smooth-reflow will work as intended on every browser.
