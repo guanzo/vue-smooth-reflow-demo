@@ -8,20 +8,20 @@
         <div class="examples-row">
             <div class="example example-zero-config">
                 <p>Look at this.<br>&nbsp;</p>
-                <div class="wrapper">
-                    <div v-for="n in children" :key="n"></div>
+                <div class="wrapper grid">
+                    <div v-for="n in children" :key="n" />
                 </div>
             </div>
             <div class="example example-existing-transition">
                 <p>Transitions on other properties<br>will be preserved.</p>
-                <div class="wrapper" :style="background">
-                    <div v-for="n in children" :key="n"></div>
+                <div class="wrapper grid" :style="background">
+                    <div v-for="n in children" :key="n" />
                 </div>
             </div>
             <div class="example example-interrupted">
                 <p>Interrupted transitions<br>are no problem.</p>
-                <div class="wrapper">
-                    <div v-for="n in children" :key="n"></div>
+                <div class="wrapper grid">
+                    <div v-for="n in children" :key="n" />
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <p>v-if.</p>
                 <div class="wrapper">
                     <transition name="fade-fast">
-                        <div v-if="children == childrenMax"></div>
+                        <div v-if="children == childrenMax" />
                     </transition>
                 </div>
             </div>
@@ -41,7 +41,7 @@
                 <p>v-show.</p>
                 <div class="wrapper">
                     <transition name="fade-fast">
-                        <div v-show="children == childrenMax"></div>
+                        <div v-show="children == childrenMax" />
                     </transition>
                 </div>
             </div>
@@ -49,15 +49,15 @@
                 <p>Transition mode "out-in".</p>
                 <div class="wrapper">
                     <transition name="fade-fast" mode="out-in">
-                        <div v-if="children == childrenMax" key="blah"></div>
-                        <div v-else class="smaller-nested" key="blah2"></div>
+                        <div v-if="children == childrenMax" key="blah" />
+                        <div v-else class="smaller-nested" key="blah2" />
                     </transition>
                 </div>
             </div>
             <div class="example example-list example-list-transition">
                 <p>Lists.</p>
                 <transition-group name="fade-fast" tag="div" class="wrapper">
-                    <div v-for="n in listChildren" :key="n"></div>
+                    <div v-for="n in listChildren" :key="n" />
                 </transition-group>
             </div>
         </div>
@@ -67,20 +67,20 @@
         <div class="examples-row">
             <div class="example example-show-overflow">
                 <p>1. Appended elements can<br>overflow their container.</p>
-                <div class="wrapper">
-                    <div v-for="n in children" :key="n"></div>
+                <div class="wrapper grid">
+                    <div v-for="n in children" :key="n" />
                 </div>
             </div>
             <div class="example example-show-scrollbar">
                 <p>2. The scrollbar can appear<br>if <code>overflow: auto</code> is set.</p>
-                <div class="wrapper">
-                    <div v-for="n in children" :key="n"></div>
+                <div class="wrapper grid">
+                    <div v-for="n in children" :key="n" />
                 </div>
             </div>
             <div class="example example-hide-scrollbar">
                 <p>To fix this, VSR hides overflow during the transition.</p>
-                <div class="wrapper">
-                    <div v-for="n in children" :key="n"></div>
+                <div class="wrapper grid">
+                    <div v-for="n in children" :key="n" />
                 </div>
             </div>
         </div>
@@ -149,7 +149,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 .examples-row {
     display: flex;
@@ -165,8 +165,6 @@ export default {
     width: 250px;
 }
 .wrapper {
-    display: flex;
-    flex-wrap: wrap;
     width: 166px;
     will-change: height;
 }
@@ -177,21 +175,27 @@ export default {
 .example-nested-transition .wrapper {
     align-items: center;
     justify-content: center;
-}
-.example-nested-transition .wrapper div {
-    width: 125px;
-    height: 117px;
-    margin: 20px;
-}
-.example-nested-transition .wrapper div.smaller-nested {
-    width: 62px;
-    height: 58px;
-    margin: 40px;
+    div {
+        width: 125px;
+        height: 117px;
+        margin: 20px;
+        &.smaller-nested {
+            width: 62px;
+            height: 58px;
+            margin: 40px;
+        }
+    }
+
 }
 .example-existing-transition .wrapper {
     transition: background 1s;
 }
 .example-show-scrollbar .wrapper, .example-hide-scrollbar .wrapper {
     overflow-y: auto;
+}
+.example-out-in > .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

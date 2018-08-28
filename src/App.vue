@@ -1,6 +1,11 @@
 <template>
     <div id="app" class="container">
-        <h2>Vue smooth reflow</h2>
+        <div class="title">
+            <h2>Vue smooth reflow</h2>
+            <a href="https://github.com/guanzo/vue-smooth-reflow" target="_blank">
+                <img class="github-link" src="https://cdnjs.cloudflare.com/ajax/libs/octicons/8.0.0/svg/mark-github.svg">
+            </a>
+        </div>
         <p>When a change in data causes a reflow, vue smooth reflow (VSR) will transition it for you.</p>
         <p>Why? Because reflows are ugly, and motion is beautiful.</p>
         <p>VSR will transition 3 CSS properties: height, width, and transform.</p>
@@ -34,14 +39,21 @@ import Height from './examples/Height'
 import Width from './examples/Width'
 import Transform from './examples/Transform'
 import Combination from './examples/Combination'
+import Test from './test/Test'
+
+let { NODE_ENV } = process.env
 
 export default {
     name: 'app',
     data() {
+        let properties = ['Height', 'Width', 'Transform', 'Combination']
+        if (NODE_ENV === 'development') {
+            properties.push('Test')
+        }
         return {
             isVsrActive: true,
             currentProp: 'Height',
-            properties: ['Height', 'Width', 'Transform', 'Combination'],
+            properties,
             vsrData: {
                 count: 0,
                 children: 3,
@@ -72,12 +84,13 @@ export default {
         Height,
         Width,
         Transform,
-        Combination
+        Combination,
+        Test
     }
 }
 </script>
 
-<style>
+<style lang="scss">
 * {
     box-sizing: border-box;
 }
@@ -88,33 +101,50 @@ body {
     font-size: 16px;
     font-family: 'Roboto', sans-serif;
 }
+.title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    h2 {
+        margin-right: 4rem;
+        margin-bottom: 0;
+    }
+    img {
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+    }
+}
 button {
     font-family : inherit;
 }
 .buttons {
     display: flex;
+    flex-wrap: wrap;
     margin-bottom: 30px;
-}
-
-.buttons button {
-    margin-right: 5px;
-}
-
-.buttons .toggle-vsr {
-    width: 160px;
-    margin-right: 50px;
+    button {
+        margin-right: 5px;
+    }
+    .toggle-vsr {
+        width: 160px;
+        margin-right: 50px;
+    }
 }
 
 .wrapper {
+    &.grid {
+        display: grid;
+        grid-template-rows: auto auto auto;
+        grid-template-columns: auto auto auto;
+    }
     background: #BBDEFB;
     padding: 2px;
-}
-
-.wrapper div {
-    background: #2196F3;
-    margin: 2px;
-    width: 50px;
-    height: 50px;
+    div {
+        background: #2196F3;
+        margin: 2px;
+        width: 50px;
+        height: 50px;
+    }
 }
 
 .fade-enter-active, .fade-leave-active {

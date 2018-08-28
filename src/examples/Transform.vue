@@ -69,7 +69,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .example {
     height: 200px;
 }

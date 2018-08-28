@@ -10,7 +10,7 @@
         <div class="example example-1">
             <div class="large" v-show="count % 2 == 0" />
             <div class="smalls">
-                <div class="wrapper">
+                <div class="wrapper grid">
                     <div v-for="n in childrenCustom" :key="n"></div>
                 </div>
             </div>
@@ -66,23 +66,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .checkboxes {
     display: flex;
     margin-bottom: 15px;
-}
-.checkboxes label {
-    margin-right: 5px;
+    label {
+        margin-right: 5px;
+    }
 }
 .example {
     height: 200px;
 }
 
-.wrapper {
-    display: grid;
-    grid-template-rows: auto auto auto;
-    grid-template-columns: auto auto auto;
-}
 .large{
     width: 166px;
     height: 50px;
